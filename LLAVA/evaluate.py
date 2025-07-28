@@ -207,9 +207,6 @@ def run(video_folder, video_prompt, quant=True):
         quant (bool, optional): Whether to use quantization for the model. Defaults to True.
     """
 
-    setup_logger()
-    log_configurations(video_prompt)
-
     if quant:
         quantization_config = BitsAndBytesConfig(
             load_in_4bit=True,

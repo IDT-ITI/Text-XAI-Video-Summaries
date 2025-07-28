@@ -54,7 +54,7 @@ def combine_selected_columns(folder_path, output_filename, selected_columns):
 
 
 # Select which VideoSet to use
-videoset = "VideoSet1"  # Change between "VideoSet1" for VideoSet1 and "VideoSet2" for VideoSet2
+videoset = "VideoSet2"  # Change between "VideoSet1" for VideoSet1 and "VideoSet2" for VideoSet2
 
 # Determine which columns to extract based on the VideoSet
 if videoset == "VideoSet1":

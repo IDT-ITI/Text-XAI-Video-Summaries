@@ -22,7 +22,7 @@ videosets = {
 }
 
 # Select which VideoSet to use
-videoset_key = "VideoSet1"  # Change between "VideoSet1" for VideoSet1 and "VideoSet2" for VideoSet2
+videoset_key = "VideoSet2"  # Change between "VideoSet1" for VideoSet1 and "VideoSet2" for VideoSet2
 
 # Create valid video index lists
 dataset = ["SumMe", "TVSum"]
