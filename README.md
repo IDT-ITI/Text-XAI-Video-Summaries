@@ -128,6 +128,7 @@ This code runs for Video Set 2 by default. If you want to run the evaluation for
 If you find our work, code or trained models useful in your work, please cite the following publication:
 
 T. Eleftheriadis, E. Apostolidis, V. Mezaris, **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
+</div>
 
 BibTeX:
 
@@ -141,9 +142,11 @@ BibTeX:
 }
 ```
 
+<div align="justify">
 Yoy may also want to have a look at the previous publication, where the methods for extracting the non-textual explanations are presented; these non-textual explanations are the ones that are transformed in the aforementioned CBMI 2025 paper into textual form. This previous publication is:
 
 K. Tsigos, E. Apostolidis, V. Mezaris, **"An Integrated Framework for Multi-Granular Explanation of Video Summarization"**, Frontiers in Signal Processing, vol. 4, 2024. [DOI:10.3389/frsip.2024.1433388](https://doi.org/10.3389/frsip.2024.1433388)
+</div>
 
 BibTeX:
 
@@ -158,7 +161,6 @@ BibTeX:
     DOI={10.3389/frsip.2024.1433388},
     ISSN={2673-8198},
 }
-</div>
 
 ## License
 <div align="justify">
