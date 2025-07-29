@@ -1,4 +1,4 @@
-# XAI-Video-Summaries-Textual-Explanations
+# An Experimental Study on Generating Plausible Textual Explanations for Video Summarization
 
 ## PyTorch implementation [[Paper](https://arxiv.org/abs/2405.10082)] [[Cite](#citation)]
 - From **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**
