@@ -128,7 +128,6 @@ This code runs for Video Set 2 by default. If you want to run the evaluation for
 If you find our work, code or trained models useful in your work, please cite the following publication:
 
 T. Eleftheriadis, E. Apostolidis, V. Mezaris, **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
-</div>
 
 BibTeX:
 
