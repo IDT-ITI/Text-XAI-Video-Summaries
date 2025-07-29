@@ -3,10 +3,14 @@
 ## PyTorch implementation [[Cite](#citation)]
 - This repository provides code and trained models from our paper **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, by Thomas Eleftheriadis, Evlampios Apostolidis and Vasileios Mezaris, accepted for publication in the Proceedings of the IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
 - This software can be used to generate plausible textual explanations for the outcomes of a video summarization model. For the needs of this study, we extend an existing framework for multigranular explanation of video summarization by integrating a state-of-the-art. Large Multimodal Model (Llava-OneVision) and prompting it to produce natural language descriptions of the obtained visual explanations. Following, we focus on one of the most desired characteristics for explainable AI, the plausibility of the obtained explanations that relates with their alignment with the humans’ reasoning and expectations. Using the extended framework, we propose an approach for evaluating the plausibility of visual explanation by quantifying the semantic overlap between their textual descriptions and the textual descriptions of the corresponding video summaries, using two sentence embedding methods (SBERT, SimCSE). Using the extended framework and the proposed plausibility evaluation approach, we conduct an experimental study using a state-of-the-art method (CA-SUM) and two datasets (SumMe, TVSum) for video summarization, aiming to examine whether the more faithful explanations are also the more plausible ones, and identify the most appropriate approach for generating plausible textual explanations for video summarization.
-- The materials provided in this paper are:
-  - Pretrained models of CA-SUM method for both datasets
-  - Temporal segmentation of the videos
-  - Extracted deep features for the videos
+- This repository includes:
+  - Pretrained models of CA-SUM method for video summarization for both datasets (TVSum and SumMe)
+  - Temporal segmentation of the videos and instructions to use the segmentation method if needed
+  - Extracted deep features for the videos and a script to re-extract them if needed
+  - Scripts for extracting visual explanations (for both Attention and LIME methods)
+  - Scripts for generating text explanations from the visual ones and calculating the similarity scores
+  - Scripts for the compuatation of the evaluation metrics
+  - Scripts for evaluation of faithfulness and plausibility
 
 ## Main dependencies
 The code was developed, checked and verified on an `Ubuntu 20.04.6` PC with an `NVIDIA RTX 4090` GPU and an `i5-12600K` CPU. All dependencies can be found inside the [requirements.txt](requirements.txt) file, which can be used to set up the necessary virtual enviroment.
