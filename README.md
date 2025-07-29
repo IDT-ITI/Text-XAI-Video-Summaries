@@ -1,8 +1,7 @@
 # An Experimental Study on Generating Plausible Textual Explanations for Video Summarization
 
 ## PyTorch implementation [[Paper](https://arxiv.org/abs/2405.10082)] [[Cite](#citation)]
-- From **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**
-- Written by Thomas Eleftheriadis, Evlampios Apostolidis and Vasileios Mezaris.
+- This repository provides code and trained models from our paper **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, by Thomas Eleftheriadis, Evlampios Apostolidis and Vasileios Mezaris, accepted for publication in the Proceedings of the IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
 - This software can be used to generate plausible textual explanations for the outcomes of a video summarization model. For the needs of this study, we extend an existing framework for multigranular explanation of video summarization by integrating a state-of-the-art. Large Multimodal Model (Llava-OneVision) and prompting it to produce natural language descriptions of the obtained visual explanations. Following, we focus on one of the most desired characteristics for explainable AI, the plausibility of the obtained explanations that relates with their alignment with the humans’ reasoning and expectations. Using the extended framework, we propose an approach for evaluating the plausibility of visual explanation by quantifying the semantic overlap between their textual descriptions and the textual descriptions of the corresponding video summaries, using two sentence embedding methods (SBERT, SimCSE). Using the extended framework and the proposed plausibility evaluation approach, we conduct an experimental study using a state-of-the-art method (CA-SUM) and two datasets (SumMe, TVSum) for video summarization, aiming to examine whether the more faithful explanations are also the more plausible ones, and identify the most appropriate approach for generating plausible textual explanations for video summarization.
 
 
@@ -126,23 +125,40 @@ This code runs for Video Set 2 by default. If you want to run the evaluation for
 ## Citation
 <div align="justify">
     
-If you find our work, code or pretrained models, useful in your work, please cite the following publication:
+If you find our work, code or trained models useful in your work, please cite the following publication:
 
-K. Tsigos, E. Apostolidis, V. Mezaris, "<b>An Integrated Framework for Multi-Granular Explanation of Video Summarization</b>", arXiv preprint arXiv:2405.10082, 2024.
+T. Eleftheriadis, E. Apostolidis, V. Mezaris, **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
 </div>
 
 BibTeX:
 
 ```
-@misc{tsigos2024integrated,
-      title={An Integrated Framework for Multi-Granular Explanation of Video Summarization}, 
-      author={Konstantinos Tsigos and Evlampios Apostolidis and Vasileios Mezaris},
-      year={2024},
-      eprint={2405.10082},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@inproceedings{eleftheriadis2025cbmi,
+      title={An Experimental Study on Generating Plausible Textual Explanations for Video Summarization}, 
+      author={Thomas Eleftheriadis and Evlampios Apostolidis and Vasileios Mezaris},
+      booktitle={IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025)},
+      year={2025},
+      organization={IEEE}
 }
 ```
+
+Yoy may also want to have a look at the previous publication, where the methods for extracting the non-textual explanations are presented; these non-textual explanations are the ones that are transformed in the aforementioned CBMI 2025 paper into textual form. This previous publication is:
+
+K. Tsigos, E. Apostolidis, V. Mezaris, **"An Integrated Framework for Multi-Granular Explanation of Video Summarization"**, Frontiers in Signal Processing, vol. 4, 2024. [DOI:10.3389/frsip.2024.1433388](https://doi.org/10.3389/frsip.2024.1433388)
+
+BibTeX:
+
+```
+@ARTICLE{10.3389/frsip.2024.1433388,
+    AUTHOR={Tsigos, Konstantinos  and Apostolidis, Evlampios  and Mezaris, Vasileios },
+    TITLE={An integrated framework for multi-granular explanation of video summarization},
+    JOURNAL={Frontiers in Signal Processing},
+    VOLUME={4},
+    YEAR={2024},
+    URL={https://www.frontiersin.org/journals/signal-processing/articles/10.3389/frsip.2024.1433388},
+    DOI={10.3389/frsip.2024.1433388},
+    ISSN={2673-8198},
+}
 </div>
 
 ## License
@@ -159,5 +175,5 @@ This software is provided by the authors "as is" and any express or implied warr
 ## Acknowledgement
 <div align="justify"> 
 
-This work was supported by the EU Horizon 2020 programme under grant agreement .
+This work was supported by the EU Horizon Europe programme under grant agreement 101070109 TransMIXR.
 </div>
