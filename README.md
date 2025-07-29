@@ -143,7 +143,7 @@ BibTeX:
 ```
 
 <div align="justify">
-Yoy may also want to have a look at the previous publication, where the methods for extracting the non-textual explanations are presented; these non-textual explanations are the ones that are transformed in the aforementioned CBMI 2025 paper into textual form. This previous publication is:
+Yoy may also want to have a look at the previous publication, where the methods for extracting the employed non-textual explanations are presented:
 
 K. Tsigos, E. Apostolidis, V. Mezaris, **"An Integrated Framework for Multi-Granular Explanation of Video Summarization"**, Frontiers in Signal Processing, vol. 4, 2024. [DOI:10.3389/frsip.2024.1433388](https://doi.org/10.3389/frsip.2024.1433388)
 </div>
@@ -161,6 +161,7 @@ BibTeX:
     DOI={10.3389/frsip.2024.1433388},
     ISSN={2673-8198},
 }
+```
 
 ## License
 <div align="justify">
