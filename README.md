@@ -11,6 +11,7 @@
   - Scripts for generating text explanations from the visual ones and calculating the similarity scores
   - Scripts for the compuatation of the evaluation metrics
   - Scripts for evaluation of faithfulness and plausibility
+  - Script for renaming original video names to desired format
 
 ## Main dependencies
 The code was developed, checked and verified on an `Ubuntu 20.04.6` PC with an `NVIDIA RTX 4090` GPU and an `i5-12600K` CPU. All dependencies can be found inside the [requirements.txt](requirements.txt) file, which can be used to set up the necessary virtual enviroment.
@@ -36,12 +37,10 @@ This will result in the following project structure:
 ## Data
 <div align="justify">
 
-Original videos for each dataset are available in the dataset providers' webpages: 
-- <a href="https://github.com/yalesong/tvsum" target="_blank"><img align="center" src="https://img.shields.io/badge/Dataset-TVSum-green"/></a> <a href="https://gyglim.github.io/me/vsum/index.html#benchmark" target="_blank"><img align="center" src="https://img.shields.io/badge/Dataset-SumMe-blue"/></a>
+Original videos for each dataset are available in the following link: 
 - <a href="https://zenodo.org/records/4884870" target="_blank"><img align="center" src="https://img.shields.io/badge/Datasets-TVSum & SumMe-blue"/></a>
 
-
-These videos have to be placed into the `SumMe` and `TVSum` directories of the [data](data) folder.
+These videos have to be placed into the `SumMe` and `TVSum` directories of the [data](data) folder. Then run [rename_videos.py](rename_videos.py) to change the original video names to the desired format.
 
 The extracted deep features for the SumMe and TVSum videos are already available into aforementioned directories. In case there is a need to extract these deep features from scratch (and store them into h5 files), please run the [feature_extraction.py](features/feature_extraction.py) script. Otherwise, an h5 file will be produced automatically for each video and stored into the relevant directory of the [data](data) folder.
 
