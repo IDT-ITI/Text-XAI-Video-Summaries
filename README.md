@@ -1,15 +1,21 @@
-# XAI-Video-Summaries-Textual-Explanations
+# An Experimental Study on Generating Plausible Textual Explanations for Video Summarization
 
-## PyTorch implementation [[Paper](https://arxiv.org/abs/2405.10082)] [[Cite](#citation)]
-- From **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**
-- Written by Thomas Eleftheriadis, Evlampios Apostolidis and Vasileios Mezaris.
+## PyTorch implementation [[Cite](#citation)]
+- This repository provides code and trained models from our paper **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, by Thomas Eleftheriadis, Evlampios Apostolidis and Vasileios Mezaris, accepted for publication in the Proceedings of the IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
 - This software can be used to generate plausible textual explanations for the outcomes of a video summarization model. For the needs of this study, we extend an existing framework for multigranular explanation of video summarization by integrating a state-of-the-art. Large Multimodal Model (Llava-OneVision) and prompting it to produce natural language descriptions of the obtained visual explanations. Following, we focus on one of the most desired characteristics for explainable AI, the plausibility of the obtained explanations that relates with their alignment with the humans’ reasoning and expectations. Using the extended framework, we propose an approach for evaluating the plausibility of visual explanation by quantifying the semantic overlap between their textual descriptions and the textual descriptions of the corresponding video summaries, using two sentence embedding methods (SBERT, SimCSE). Using the extended framework and the proposed plausibility evaluation approach, we conduct an experimental study using a state-of-the-art method (CA-SUM) and two datasets (SumMe, TVSum) for video summarization, aiming to examine whether the more faithful explanations are also the more plausible ones, and identify the most appropriate approach for generating plausible textual explanations for video summarization.
-
+- This repository includes:
+  - Pretrained models of CA-SUM method for video summarization for both datasets (TVSum and SumMe)
+  - Temporal segmentation of the videos and instructions to use the segmentation method if needed
+  - Extracted deep features for the videos and a script to re-extract them if needed
+  - Scripts for extracting visual explanations (for both Attention and LIME methods)
+  - Scripts for generating text explanations from the visual ones and calculating the similarity scores
+  - Scripts for the compuatation of the evaluation metrics
+  - Scripts for evaluation of faithfulness and plausibility
 
 ## Main dependencies
 The code was developed, checked and verified on an `Ubuntu 20.04.6` PC with an `NVIDIA RTX 4090` GPU and an `i5-12600K` CPU. All dependencies can be found inside the [requirements.txt](requirements.txt) file, which can be used to set up the necessary virtual enviroment.
 
-Regarding the temporal segmentation of the videos, the utilized fragments in our experiments are available in the [data](https://github.com/IDT-ITI/XAI-Video-Summaries/tree/main/data) folder. As stated in our paper, these fragments were produced by the TransNetV2 shot segmentation method (for multi-shot videos) and the motion-driven method for sub-shot segmentation (for single-shot videos), described in [Apostolidis et al. (2018)](https://link.springer.com/chapter/10.1007/978-3-319-73603-7_3). In case there is a need to re-run shot segmentation, please use the code from the [official Github repository](https://github.com/soCzech/TransNetV2) and set-up the necesary environment following the instructions in the aforementioned repository. In case there is a need to also re-run sub-shot segmentation, please contact us for providing access to the utilized method.
+Regarding the temporal segmentation of the videos, the utilized fragments in our experiments are available in the [data](data) folder. As stated in our paper, these fragments were produced by the TransNetV2 shot segmentation method (for multi-shot videos) and the motion-driven method for sub-shot segmentation (for single-shot videos), described in [Apostolidis et al. (2018)](https://link.springer.com/chapter/10.1007/978-3-319-73603-7_3). In case there is a need to re-run shot segmentation, please use the code from the [official Github repository](https://github.com/soCzech/TransNetV2) and set-up the necesary environment following the instructions in the aforementioned repository. In case there is a need to also re-run sub-shot segmentation, please contact us for providing access to the utilized method.
 
 The path of the TransNetV2 project, along with its corresponding virtual environment can be set in the [video_segmentation.py](segmentation/video_segmentation.py#L7:L10) file. Please note that the paths for the project are given relatively to the parent directory of this project, while the path of the virtual environments is given relatively to the root directory of the corresponding project.
 
@@ -31,8 +37,11 @@ This will result in the following project structure:
 <div align="justify">
 
 Original videos for each dataset are available in the dataset providers' webpages: 
+- <a href="https://github.com/yalesong/tvsum" target="_blank"><img align="center" src="https://img.shields.io/badge/Dataset-TVSum-green"/></a> <a href="https://gyglim.github.io/me/vsum/index.html#benchmark" target="_blank"><img align="center" src="https://img.shields.io/badge/Dataset-SumMe-blue"/></a>
+- <a href="https://zenodo.org/records/4884870" target="_blank"><img align="center" src="https://img.shields.io/badge/Datasets-TVSum & SumMe-blue"/></a>
 
-These videos have to be placed into the `SumMe` and `TVSum' directories of the [data](data) folder.
+
+These videos have to be placed into the `SumMe` and `TVSum` directories of the [data](data) folder.
 
 The extracted deep features for the SumMe and TVSum videos are already available into aforementioned directories. In case there is a need to extract these deep features from scratch (and store them into h5 files), please run the [feature_extraction.py](features/feature_extraction.py) script. Otherwise, an h5 file will be produced automatically for each video and stored into the relevant directory of the [data](data) folder.
 
@@ -53,7 +62,7 @@ tvsum.pkl | 63.462 | 44 | 4 | 0.5
 ## Producing explanations
 <div align="justify">
 
-To produce visual and text explanations, and faithfulness and plausibility scores of the SumMe and TVSum datasets, please execute the following commands:
+To produce visual and text explanations, and faithfulness and plausibility scores of the SumMe and TVSum videos, please execute the following commands:
 ```
 bash explain.sh
 ```
@@ -117,33 +126,53 @@ Similarly, this will compute the average of the plausibility of the obtained exp
 - SimCSE - LIME
 - SBERT - LIME
 
-This code runs for Video Set 2 by default. If you want to run the evaluation for Video Set 1 you have clear the data folder and run with the following changes:
-- text_explanation.py: at line 22 change _"evaluate2.py"_ to _"evaluate.py"_
-- combine_fragment_evaluation_files.py: at line 25 change videoset_key from _"VideoSet2"_ to _"VideoSet1"_
-- combine_similarities_files.py: at line 57 change videoset from _"VideoSet2"_ to _"VideoSet1"_
+The code runs for Video Set 2 by default. If you want to run the evaluation for Video Set 1 you have to clear the data folder and run with the following changes:
+- [text_explanation.py](explanation/text_explanation.py#L22) at line 22 change _"evaluate2.py"_ to _"evaluate.py"_
+- [combine_fragment_evaluation_files.py](explanation/combine_fragment_evaluation_files.py#L25) at line 25 change videoset_key from _"VideoSet2"_ to _"VideoSet1"_
+- [combine_similarities_files.py](explanation/combine_similarities_files.py#L57) at line 57 change videoset from _"VideoSet2"_ to _"VideoSet1"_
 
 
 ## Citation
 <div align="justify">
     
-If you find our work, code or pretrained models, useful in your work, please cite the following publication:
+If you find our work, code or trained models useful in your work, please cite the following publication:
 
-K. Tsigos, E. Apostolidis, V. Mezaris, "<b>An Integrated Framework for Multi-Granular Explanation of Video Summarization</b>", arXiv preprint arXiv:2405.10082, 2024.
+T. Eleftheriadis, E. Apostolidis, V. Mezaris, **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
 </div>
 
 BibTeX:
 
 ```
-@misc{tsigos2024integrated,
-      title={An Integrated Framework for Multi-Granular Explanation of Video Summarization}, 
-      author={Konstantinos Tsigos and Evlampios Apostolidis and Vasileios Mezaris},
-      year={2024},
-      eprint={2405.10082},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@inproceedings{eleftheriadis2025cbmi,
+      title={An Experimental Study on Generating Plausible Textual Explanations for Video Summarization}, 
+      author={Thomas Eleftheriadis and Evlampios Apostolidis and Vasileios Mezaris},
+      booktitle={IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025)},
+      year={2025},
+      organization={IEEE}
 }
 ```
+
+<div align="justify">
+
+Yoy may also want to have a look at our previous publication, where extracting non-textual explanations was presented:
+
+K. Tsigos, E. Apostolidis, V. Mezaris, **"An Integrated Framework for Multi-Granular Explanation of Video Summarization"**, Frontiers in Signal Processing, vol. 4, 2024. [DOI:10.3389/frsip.2024.1433388](https://doi.org/10.3389/frsip.2024.1433388)
 </div>
+
+BibTeX:
+
+```
+@ARTICLE{10.3389/frsip.2024.1433388,
+    AUTHOR={Tsigos, Konstantinos  and Apostolidis, Evlampios  and Mezaris, Vasileios },
+    TITLE={An integrated framework for multi-granular explanation of video summarization},
+    JOURNAL={Frontiers in Signal Processing},
+    VOLUME={4},
+    YEAR={2024},
+    URL={https://www.frontiersin.org/journals/signal-processing/articles/10.3389/frsip.2024.1433388},
+    DOI={10.3389/frsip.2024.1433388},
+    ISSN={2673-8198},
+}
+```
 
 ## License
 <div align="justify">
@@ -159,5 +188,5 @@ This software is provided by the authors "as is" and any express or implied warr
 ## Acknowledgement
 <div align="justify"> 
 
-This work was supported by the EU Horizon 2020 programme under grant agreement .
+This work was supported by the EU Horizon Europe programme under grant agreement 101070109 TransMIXR.
 </div>
