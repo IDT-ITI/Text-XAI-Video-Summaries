@@ -8,7 +8,7 @@
   - Temporal segmentation of the videos and instructions to use the segmentation method if needed
   - Extracted deep features for the videos and a script to re-extract them if needed
   - Scripts for extracting visual explanations (for both Attention and LIME methods)
-  - Scripts for generating text explanations from the visual ones and calculating the similarity scores
+  - Scripts for generating text explanations from the visual ones and calculating the similarity scores (for both SimCSE and SBERT methods)
   - Scripts for the compuatation of the evaluation metrics
   - Scripts for evaluation of faithfulness and plausibility
   - Script for renaming original video names to desired format
@@ -16,7 +16,7 @@
 ## Main dependencies
 The code was developed, checked and verified on an `Ubuntu 20.04.6` PC with an `NVIDIA RTX 4090` GPU and an `i5-12600K` CPU. All dependencies can be found inside the [requirements.txt](requirements.txt) file, which can be used to set up the necessary virtual enviroment.
 
-Regarding the temporal segmentation of the videos, the utilized fragments in our experiments are available in the [data](data) folder. As stated in our paper, these fragments were produced by the TransNetV2 shot segmentation method (for multi-shot videos) and the motion-driven method for sub-shot segmentation (for single-shot videos), described in [Apostolidis et al. (2018)](https://link.springer.com/chapter/10.1007/978-3-319-73603-7_3). In case there is a need to re-run shot segmentation, please use the code from the [official Github repository](https://github.com/soCzech/TransNetV2) and set-up the necesary environment following the instructions in the aforementioned repository. In case there is a need to also re-run sub-shot segmentation, please contact us for providing access to the utilized method.
+Regarding the temporal segmentation of the videos, the utilized fragments in our experiments are available in the [data](data) folder. These fragments were produced by the TransNetV2 shot segmentation method (for multi-shot videos) and the motion-driven method for sub-shot segmentation (for single-shot videos), described in [Apostolidis et al. (2018)](https://link.springer.com/chapter/10.1007/978-3-319-73603-7_3). In case there is a need to re-run shot segmentation, please use the code from the [official Github repository](https://github.com/soCzech/TransNetV2) and set-up the necesary environment following the instructions in the aforementioned repository. In case there is a need to also re-run sub-shot segmentation, please contact us for providing access to the utilized method.
 
 The path of the TransNetV2 project, along with its corresponding virtual environment can be set in the [video_segmentation.py](segmentation/video_segmentation.py#L7:L10) file. Please note that the paths for the project are given relatively to the parent directory of this project, while the path of the virtual environments is given relatively to the root directory of the corresponding project.
 
@@ -37,8 +37,9 @@ This will result in the following project structure:
 ## Data
 <div align="justify">
 
-Original videos for each dataset are available in the following link: 
-- <a href="https://zenodo.org/records/4884870" target="_blank"><img align="center" src="https://img.shields.io/badge/Datasets-TVSum & SumMe-blue"/></a>
+Original videos for each dataset are available in the following link:
+
+<a href="https://zenodo.org/records/4884870" target="_blank"><img align="center" src="https://img.shields.io/badge/Datasets-TVSum & SumMe-blue"/></a>
 
 These videos have to be placed into the `SumMe` and `TVSum` directories of the [data](data) folder. Then run [rename_videos.py](rename_videos.py) to change the original video names to the desired format.
 
