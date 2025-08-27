@@ -3,15 +3,13 @@
 ## PyTorch implementation [[Cite](#citation)]
 - This repository provides code and trained models from our paper **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, by Thomas Eleftheriadis, Evlampios Apostolidis and Vasileios Mezaris, accepted for publication in the Proceedings of the IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
 - This software can be used to generate plausible textual explanations for the outcomes of a video summarization model. More specifically, our framework produces: a) visual explanations including the video fragments that influenced the most the decisions of the summarizer, using the model-specific (attention-based) and model-agnostic (LIME-based) explanation methods from [Tsigos et al. (2024)](https://www.frontiersin.org/journals/signal-processing/articles/10.3389/frsip.2024.1433388/full), and b) plausible textual explanations by integrating a state-of-the-art Large Multimodal Model (Llava-OneVision) and prompting it to produce natural language descriptions of the produced visual explanations. The plausibility of a visual explanation is quantified by measuring the semantic overlap between its textual description and the textual description of the corresponding video summary, using two sentence embedding methods (SBERT, SimCSE). With this framework, a state-of-the-art method (CA-SUM) and two datasets (SumMe, TVSum) for video summarization, we ran experiments to examine whether the more faithful explanations are also the more plausible ones, and identify the most appropriate approach for generating plausible textual explanations for video summarization.
-- This repository includes: **TO BE UPDATED**
-  - Models of the CA-SUM video summarization method, pretrained on the SumMe and TVSum datasets
-  - Information about the temporal segmentation of the videos, as well as instructions on how to obtain this information
-  - Extracted deep features for the videos and a script to re-extract them if needed
-  - Scripts for extracting visual explanations (for both explanation methods methods)
-  - Scripts for generating text explanations calculating the similarity scores (for both SimCSE and SBERT methods)
-  - Scripts for the computation of the evaluation metrics
-  - Scripts for evaluation of faithfulness and plausibility
-  - Script for renaming original video names to desired format
+- This repository includes: 
+  - Details about the main dependencies of the released code
+  - Information for obtaining the videos of the utilized datasets
+  - The employed features and pretrained models in our experiments
+  - Instructions for producing visual and textual explanations for the videos of the utilized datasets, as well as for individual videos
+  - Instructions for obtaining the reported evaluation process
+  - Other details (citation, licence, acknowledgement)
 
 ## Main dependencies
 The code was developed, checked and verified on an `Ubuntu 20.04.6` PC with an `NVIDIA RTX 4090` GPU and an `i5-12600K` CPU. All dependencies can be found inside the [requirements.txt](requirements.txt) file, which can be used to set up the necessary virtual enviroment.
@@ -106,32 +104,10 @@ python explanation/text_explain.py --model MODEL_PATH --video VIDEO_PATH --fragm
 ## Evaluation results
 <div align="justify">
 
-This extended framework was evaulated on 2 subsets of SumMe and TVSum datasets. Video Set 1 contains the videos that have at least 1 top-scoring fragment by the explanation methods. 
-Video Set 2 includes a subset of videos that have at least 3 top-scoring fragments by the explanation methods.
-
-To get the evaluation results, run:
-```
-python explanation/combine_fragment_evaluation_files.py
-```
-This will compute the average of faithfulness (in terms of Discoverability+) of the obtained visual explanations from the fragments_explanation_evaluation_metrics.csv files of each video and will create a folder “final_scores” with the *.csv files containing the averages of the metrics and more particularly:
-- Attention Disc+
-- LIME Disc+
-
-and
-```
-python explanation/combine_similarites_files.py
-```
-Similarly, this will compute the average of the plausibility of the obtained explanations for each explanation method (Attention or LIME) for each sentence embedding method (SimCSE or SBERT). For VideoSet2 it will do the same for both approaches. More particularly it will compute the following explanation/summary similarity scores:
-- SimCSE - Attention
-- SBERT - Attention
-- SimCSE - LIME
-- SBERT - LIME
-
-The code runs for Video Set 2 by default. If you want to run the evaluation for Video Set 1 you have to clear the data folder and run with the following changes:
+To get the overall evaluation results (for all videos of the used datasets) about the **faithfulness** (Disc+) of the produced **visual explanations**, please run the [combine_fragment_evaluation_files.py](/explanation/combine_fragment_evaluation_files.py) script. The final scores are saved into the `final_scores` directory that is placed inside the [explanation](/explanation) folder. Then, to get the overall evaluation results about the **plausibility** of the produced **textual explanations**, please run the [combine_similarites_files.py](explanation/combine_similarites_files.py) script. Please note that the code runs for the videos of Video Set 2 by default, i.e. for the TVSum videos that have at least 3 top-scoring fragments by the explanation methods. To run the evaluation for the videos of Video Set 1 (i.e., for the videos of the SumMe and TVSum datasets that have at least 1 top-scoring fragment by the explanation methods), please re-run the code after performing the following changes:
 - [text_explanation.py](explanation/text_explanation.py#L22) at line 22 change _"evaluate2.py"_ to _"evaluate.py"_
 - [combine_fragment_evaluation_files.py](explanation/combine_fragment_evaluation_files.py#L25) at line 25 change videoset_key from _"VideoSet2"_ to _"VideoSet1"_
 - [combine_similarities_files.py](explanation/combine_similarities_files.py#L57) at line 57 change videoset from _"VideoSet2"_ to _"VideoSet1"_
-
 
 ## Citation
 <div align="justify">
