@@ -8,7 +8,7 @@
   - Information for obtaining the videos of the utilized datasets.
   - The employed features and pretrained models in our experiments.
   - Instructions for producing visual and textual explanations for the videos of the utilized datasets, as well as for individual videos.
-  - Instructions for obtaining the reported evaluation process.
+  - Instructions for obtaining the reported evaluation results.
   - Other details (citation, licence, acknowledgement).
 
 ## Main dependencies
@@ -104,10 +104,10 @@ python explanation/text_explain.py --model MODEL_PATH --video VIDEO_PATH --fragm
 ## Evaluation results
 <div align="justify">
 
-To get the overall evaluation results (for all videos of the used datasets) about the **faithfulness** (Disc+) of the produced **visual explanations**, please run the [combine_fragment_evaluation_files.py](/explanation/combine_fragment_evaluation_files.py) script. The final scores are saved into the `final_scores` directory that is placed inside the [explanation](/explanation) folder. Then, to get the overall evaluation results about the **plausibility** of the produced **textual explanations**, please run the [combine_similarites_files.py](explanation/combine_similarites_files.py) script. Please note that the code runs for the videos of Video Set 2 by default, i.e. for the TVSum videos that have at least 3 top-scoring fragments by the explanation methods. To run the evaluation for the videos of Video Set 1 (i.e., for the videos of the SumMe and TVSum datasets that have at least 1 top-scoring fragment by the explanation methods), please re-run the code after performing the following changes:
+To get the overall evaluation results (for all videos of the used datasets) about the **faithfulness** (Disc+) of the produced **visual explanations**, please run the [combine_fragment_evaluation_files.py](/explanation/combine_fragment_evaluation_files.py) script. The final scores are saved into the `final_scores` directory, that is placed inside the [explanation](/explanation) folder. Then, to get the overall evaluation results about the **plausibility** of the produced **textual explanations**, please run the [combine_similarities_files.py](explanation/combine_similarities_files.py) script. Please note that the code runs for the videos of Video Set 2 by default, i.e. for the TVSum videos that have at least 3 top-scoring fragments by the explanation methods. To run the evaluation for the videos of Video Set 1 (i.e., for the videos of the SumMe and TVSum datasets, that have at least 1 top-scoring fragment by the explanation methods), please re-run the code after performing the following changes:
 - [text_explanation.py](explanation/text_explanation.py#L22) at line 22 change _"evaluate2.py"_ to _"evaluate.py"_
-- [combine_fragment_evaluation_files.py](explanation/combine_fragment_evaluation_files.py#L25) at line 25 change videoset_key from _"VideoSet2"_ to _"VideoSet1"_
-- [combine_similarities_files.py](explanation/combine_similarities_files.py#L57) at line 57 change videoset from _"VideoSet2"_ to _"VideoSet1"_
+- [combine_fragment_evaluation_files.py](explanation/combine_fragment_evaluation_files.py#L25) at line 25 change "videoset_key" from _"VideoSet2"_ to _"VideoSet1"_
+- [combine_similarities_files.py](explanation/combine_similarities_files.py#L57) at line 57 change "videoset" from _"VideoSet2"_ to _"VideoSet1"_
 
 ## Citation
 <div align="justify">
