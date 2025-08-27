@@ -4,12 +4,12 @@
 - This repository provides code and trained models from our paper **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, by Thomas Eleftheriadis, Evlampios Apostolidis and Vasileios Mezaris, accepted for publication in the Proceedings of the IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
 - This software can be used to generate plausible textual explanations for the outcomes of a video summarization model. More specifically, our framework produces: a) visual explanations including the video fragments that influenced the most the decisions of the summarizer, using the model-specific (attention-based) and model-agnostic (LIME-based) explanation methods from [Tsigos et al. (2024)](https://www.frontiersin.org/journals/signal-processing/articles/10.3389/frsip.2024.1433388/full), and b) plausible textual explanations by integrating a state-of-the-art Large Multimodal Model (Llava-OneVision) and prompting it to produce natural language descriptions of the produced visual explanations. The plausibility of a visual explanation is quantified by measuring the semantic overlap between its textual description and the textual description of the corresponding video summary, using two sentence embedding methods (SBERT, SimCSE). With this framework, a state-of-the-art method (CA-SUM) and two datasets (SumMe, TVSum) for video summarization, we ran experiments to examine whether the more faithful explanations are also the more plausible ones, and identify the most appropriate approach for generating plausible textual explanations for video summarization.
 - This repository includes: 
-  - Details about the main dependencies of the released code
-  - Information for obtaining the videos of the utilized datasets
-  - The employed features and pretrained models in our experiments
-  - Instructions for producing visual and textual explanations for the videos of the utilized datasets, as well as for individual videos
-  - Instructions for obtaining the reported evaluation process
-  - Other details (citation, licence, acknowledgement)
+  - Details about the main dependencies of the released code.
+  - Information for obtaining the videos of the utilized datasets.
+  - The employed features and pretrained models in our experiments.
+  - Instructions for producing visual and textual explanations for the videos of the utilized datasets, as well as for individual videos.
+  - Instructions for obtaining the reported evaluation process.
+  - Other details (citation, licence, acknowledgement).
 
 ## Main dependencies
 The code was developed, checked and verified on an `Ubuntu 20.04.6` PC with an `NVIDIA RTX 4090` GPU and an `i5-12600K` CPU. All dependencies can be found inside the [requirements.txt](requirements.txt) file, which can be used to set up the necessary virtual enviroment.
@@ -62,9 +62,9 @@ bash explain.sh
 ```
 
 For each video in these datasets, this command:
-- creates a new folder (if it does not already exist) in the directory where the video is stored
-- extracts deep features from the video frames and identifies the shots of the video, and stores the obtained data in h5 and txt files, respectively (if the files containing these data do not already exist)
-- creates a subfolder, named **visual_explanation**, with the following files: 
+- creates a new folder (if it does not already exist) in the directory where the video is stored,
+- extracts deep features from the video frames and identifies the shots of the video, and stores the obtained data in h5 and txt files, respectively (if the files containing these data do not already exist),
+- and creates a subfolder, named **visual_explanation**, with the following files: 
   - "_explanation_and_top_fragments.txt_": contains information (indices of the start and end frame) for the selected video fragments by each explanation method (max default = 3), as well as for the fragments of the video summary (default = 3)
   - "_fragments_explanation.txt_": contains a ranking (in descending order) of the video fragments (represented by the indices of the start and end frame) according to the assigned scores by each explanation method
   - "_fragments_explanation_evaluation_metrics.csv_": contains the computed faithfulness (Disc+) scores for each explanation method
@@ -83,18 +83,18 @@ For each video in these datasets, this command:
   - "_video_id_lime_importance.txt_": contains the selected video fragments by the LIME-based explanation method, ranked based on the assigned scores
   - "_video_id_shots.txt_": contains information (indices of the start and end frame) about the fragments of the video (rename of shots.txt or opt_shots.txt)
   - "_video_id_sum_shots.txt_": contains information (indices of the start and end frame) about the fragments of the video summary
-- calls a subprocess, named LLAVA, which creates the following files:
+- and calls a subprocess, named LLAVA, which creates the following files:
   - "_video_id_text.txt_": contains the generated textual descriptions of the visual explanations and the video summary
   - "_video_id_similarities.csv_": contains the computed SimCSE and SBERT scores for these textual explanations
 
 
-To produce visual explanations for an individual video using both the model-specific (attention-based) and model-agnostic (LIME-based) methods of the framework, run:
+To produce visual explanations for an individual video using both the model-specific (attention-based) and model-agnostic (LIME-based) methods of the framework, please run:
 ```
 python explanation/explain.py --model MODEL_PATH --video VIDEO_PATH --fragments NUM_OF_FRAGMENTS
 ```
 where, `MODEL_PATH` refers to the path of the trained summarization model, `VIDEO_PATH` refers to the path of the video, and `NUM_OF_FRAGMENTS` refers to the number of utilized video fragments for generating the explanations (optional; default = 3).
 
-Then, to produce textual explanations for this video, run:
+Then, to produce textual explanations for this video, please run:
 ```
 python explanation/text_explain.py --model MODEL_PATH --video VIDEO_PATH --fragments NUM_OF_FRAGMENTS
 ```
