@@ -131,7 +131,7 @@ BibTeX:
 
 <div align="justify">
 
-Yoy may also want to have a look at our previous publication, where extracting non-textual explanations was presented:
+You may also want to have a look at our previous publication, where extracting non-textual explanations was presented:
 
 K. Tsigos, E. Apostolidis, V. Mezaris, **"An Integrated Framework for Multi-Granular Explanation of Video Summarization"**, Frontiers in Signal Processing, vol. 4, 2024. [DOI:10.3389/frsip.2024.1433388](https://doi.org/10.3389/frsip.2024.1433388)
 </div>
