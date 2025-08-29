@@ -123,7 +123,7 @@ BibTeX:
 @inproceedings{eleftheriadis2025cbmi,
       title={An Experimental Study on Generating Plausible Textual Explanations for Video Summarization}, 
       author={Thomas Eleftheriadis and Evlampios Apostolidis and Vasileios Mezaris},
-      booktitle={IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025)},
+      booktitle={2025 IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI)},
       year={2025},
       organization={IEEE}
 }
