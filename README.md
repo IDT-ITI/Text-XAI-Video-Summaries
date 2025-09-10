@@ -65,28 +65,23 @@ For each video in these datasets, this command:
 - creates a new folder (if it does not already exist) in the directory where the video is stored,
 - extracts deep features from the video frames and identifies the shots of the video, and stores the obtained data in h5 and txt files, respectively (if the files containing these data do not already exist),
 - and creates a subfolder, named **visual_explanation**, with the following files: 
-  - "_explanation_and_top_fragments.txt_": contains information (indices of the start and end frame) for the selected video fragments by each explanation method (max default = 3), as well as for the fragments of the video summary (default = 3)
+  - "_attention_explanations.txt_": contains the selected video fragments by the attention-based explanation method, in temporal order (i.e. based on their occurence in the video)
+  - "_attention_importance.txt_": contains the selected video fragments by the attention-based explanation method, ranked based on the assigned scores
+  - "_lime_explanations.txt_": contains the selected video fragments by the LIME-based explanation method, in temporal order (i.e. based on their occurence in the video)
+  - "_lime_importance.txt_": contains the selected video fragments by the LIME-based explanation method, ranked based on the assigned scores
+  - "_sum_shots.txt_": contains information (indices of the start and end frame) about the fragments of the video summary
   - "_fragments_explanation.txt_": contains a ranking (in descending order) of the video fragments (represented by the indices of the start and end frame) according to the assigned scores by each explanation method
   - "_fragments_explanation_evaluation_metrics.csv_": contains the computed faithfulness (Disc+) scores for each explanation method
   - "_indexes.csv_": contains the indices of the video fragments ranked (in descending order) according to the assigned scores by each explanation method
 
 Then, to produce textual descriptions of the created visual explanations, run the following command:
 ```
-python explanation/text_explanation.py
+python explanation/text_explanation.py -d ./data/SumMe ./data/TVSum
 ```
 
-For each video in these datasets, this command:
-- creates another subfolder, named **textual_explanation**, with the following files:
-  - "_video_id_attention_explanations.txt_": contains the selected video fragments by the attention-based explanation method, in temporal order (i.e. based on their occurence in the video)
-  - "_video_id_attention_importance.txt_": contains the selected video fragments by the attention-based explanation method, ranked based on the assigned scores
-  - "_video_id_lime_explanations.txt_": contains the selected video fragments by the LIME-based explanation method, in temporal order (i.e. based on their occurence in the video)
-  - "_video_id_lime_importance.txt_": contains the selected video fragments by the LIME-based explanation method, ranked based on the assigned scores
-  - "_video_id_shots.txt_": contains information (indices of the start and end frame) about the fragments of the video (rename of shots.txt or opt_shots.txt)
-  - "_video_id_sum_shots.txt_": contains information (indices of the start and end frame) about the fragments of the video summary
-- and calls a subprocess, named LLAVA, which creates the following files:
+For each video in these datasets, this command calls a subprocess, named LLAVA, which creates another subfolder, named **textual_explanation**, with the following files:
   - "_video_id_text.txt_": contains the generated textual descriptions of the visual explanations and the video summary
   - "_video_id_similarities.csv_": contains the computed SimCSE and SBERT scores for these textual explanations
-
 
 To produce visual explanations for an individual video using both the model-specific (attention-based) and model-agnostic (LIME-based) methods of the framework, please run:
 ```
@@ -96,7 +91,13 @@ where, `MODEL_PATH` refers to the path of the trained summarization model, `VIDE
 
 Then, to produce textual explanations for this video, please run:
 ```
-python explanation/text_explain.py --model MODEL_PATH --video VIDEO_PATH --fragments NUM_OF_FRAGMENTS
+python explanation/text_explain.py -d VIDEO_PATH
+```
+
+Example:
+```
+python explanation/explain.py --m models/tvsum.pkl -v ../data/TVSum/video_17.mp4
+python explanation/text_explain.py -d ./data/TVSum/video_17.mp4
 ```
 
 </div>
@@ -104,10 +105,7 @@ python explanation/text_explain.py --model MODEL_PATH --video VIDEO_PATH --fragm
 ## Evaluation results
 <div align="justify">
 
-To get the overall evaluation results (for all videos of the used datasets) about the **faithfulness** (Disc+) of the produced **visual explanations**, please run the [combine_fragment_evaluation_files.py](/explanation/combine_fragment_evaluation_files.py) script. The final scores are saved into the `final_scores` directory, that is placed inside the [explanation](/explanation) folder. Then, to get the overall evaluation results about the **plausibility** of the produced **textual explanations**, please run the [combine_similarities_files.py](explanation/combine_similarities_files.py) script. Please note that the code runs for the videos of Video Set 2 by default, i.e. for the TVSum videos that have at least 3 top-scoring fragments by the explanation methods. To run the evaluation for the videos of Video Set 1 (i.e., for the videos of the SumMe and TVSum datasets, that have at least 1 top-scoring fragment by the explanation methods), please re-run the code after performing the following changes:
-- [text_explanation.py](explanation/text_explanation.py#L22) at line 22 change _"evaluate2.py"_ to _"evaluate.py"_
-- [combine_fragment_evaluation_files.py](explanation/combine_fragment_evaluation_files.py#L25) at line 25 change "videoset_key" from _"VideoSet2"_ to _"VideoSet1"_
-- [combine_similarities_files.py](explanation/combine_similarities_files.py#L57) at line 57 change "videoset" from _"VideoSet2"_ to _"VideoSet1"_
+To get the overall evaluation results (for all videos of the used datasets) about the **faithfulness** (Disc+) of the produced **visual explanations**, please run the [combine_fragment_evaluation_files.py](/explanation/combine_fragment_evaluation_files.py) script. The final scores are saved into the `final_scores` directory, that is placed inside the [explanation](/explanation) folder. Then, to get the overall evaluation results about the **plausibility** of the produced **textual explanations**, please run the [combine_similarities_files.py](explanation/combine_similarities_files.py) script. The average scores are saved as _averages_top_1.csv_ and _averages_top_3.csv_ in the same folder.  
 
 ## Citation
 <div align="justify">
