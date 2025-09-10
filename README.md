@@ -1,23 +1,22 @@
 # An Experimental Study on Generating Plausible Textual Explanations for Video Summarization
 
 ## PyTorch implementation [[Cite](#citation)]
-- This repository provides code and trained models from our paper **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, by Thomas Eleftheriadis, Evlampios Apostolidis and Vasileios Mezaris, accepted for publication in the Proceedings of the IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
-- This software can be used to generate plausible textual explanations for the outcomes of a video summarization model. For the needs of this study, we extend an existing framework for multigranular explanation of video summarization by integrating a state-of-the-art. Large Multimodal Model (Llava-OneVision) and prompting it to produce natural language descriptions of the obtained visual explanations. Following, we focus on one of the most desired characteristics for explainable AI, the plausibility of the obtained explanations that relates with their alignment with the humans’ reasoning and expectations. Using the extended framework, we propose an approach for evaluating the plausibility of visual explanation by quantifying the semantic overlap between their textual descriptions and the textual descriptions of the corresponding video summaries, using two sentence embedding methods (SBERT, SimCSE). Using the extended framework and the proposed plausibility evaluation approach, we conduct an experimental study using a state-of-the-art method (CA-SUM) and two datasets (SumMe, TVSum) for video summarization, aiming to examine whether the more faithful explanations are also the more plausible ones, and identify the most appropriate approach for generating plausible textual explanations for video summarization.
-- This repository includes:
-  - Pretrained models of CA-SUM method for video summarization for both datasets (TVSum and SumMe)
-  - Temporal segmentation of the videos and instructions to use the segmentation method if needed
-  - Extracted deep features for the videos and a script to re-extract them if needed
-  - Scripts for extracting visual explanations (for both Attention and LIME methods)
-  - Scripts for generating text explanations from the visual ones and calculating the similarity scores
-  - Scripts for the compuatation of the evaluation metrics
-  - Scripts for evaluation of faithfulness and plausibility
+- This repository provides code and trained models from our paper **"An Experimental Study on Generating Plausible Textual Explanations for Video Summarization"**, written by Thomas Eleftheriadis, Evlampios Apostolidis and Vasileios Mezaris, and accepted for publication in the Proceedings of the IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025), Dublin, Ireland, Oct. 2025.
+- This software can be used to generate plausible textual explanations for the outcomes of a video summarization model. More specifically, our framework produces: a) visual explanations including the video fragments that influenced the most the decisions of the summarizer, using the model-specific (attention-based) and model-agnostic (LIME-based) explanation methods from [Tsigos et al. (2024)](https://www.frontiersin.org/journals/signal-processing/articles/10.3389/frsip.2024.1433388/full), and b) plausible textual explanations by integrating a state-of-the-art Large Multimodal Model (Llava-OneVision) and prompting it to produce natural language descriptions of the produced visual explanations. The plausibility of a visual explanation is quantified by measuring the semantic overlap between its textual description and the textual description of the corresponding video summary, using two sentence embedding methods (SBERT, SimCSE). With this framework, a state-of-the-art method (CA-SUM) and two datasets (SumMe, TVSum) for video summarization, we ran experiments to examine whether the more faithful explanations are also the more plausible ones, and identify the most appropriate approach for generating plausible textual explanations for video summarization.
+- This repository includes: 
+  - Details about the main dependencies of the released code.
+  - Information for obtaining the videos of the utilized datasets.
+  - The employed features and pretrained models in our experiments.
+  - Instructions for producing visual and textual explanations for the videos of the utilized datasets, as well as for individual videos.
+  - Instructions for obtaining the reported evaluation results.
+  - Other details (citation, licence, acknowledgement).
 
 ## Main dependencies
 The code was developed, checked and verified on an `Ubuntu 20.04.6` PC with an `NVIDIA RTX 4090` GPU and an `i5-12600K` CPU. All dependencies can be found inside the [requirements.txt](requirements.txt) file, which can be used to set up the necessary virtual enviroment.
 
-Regarding the temporal segmentation of the videos, the utilized fragments in our experiments are available in the [data](data) folder. As stated in our paper, these fragments were produced by the TransNetV2 shot segmentation method (for multi-shot videos) and the motion-driven method for sub-shot segmentation (for single-shot videos), described in [Apostolidis et al. (2018)](https://link.springer.com/chapter/10.1007/978-3-319-73603-7_3). In case there is a need to re-run shot segmentation, please use the code from the [official Github repository](https://github.com/soCzech/TransNetV2) and set-up the necesary environment following the instructions in the aforementioned repository. In case there is a need to also re-run sub-shot segmentation, please contact us for providing access to the utilized method.
+Regarding the temporal segmentation of the videos, the utilized fragments in our experiments are available in the [data](data) folder. These fragments were produced by the TransNetV2 shot segmentation method (for multi-shot videos) and the motion-driven method for sub-shot segmentation (for single-shot videos), described in [Apostolidis et al. (2018)](https://link.springer.com/chapter/10.1007/978-3-319-73603-7_3). In case there is a need to re-run shot segmentation, please use the code from the [official Github repository](https://github.com/soCzech/TransNetV2) and set-up the necesary environment following the instructions in the aforementioned repository. In case there is a need to also re-run sub-shot segmentation, please contact us for providing access to the utilized method.
 
-The path of the TransNetV2 project, along with its corresponding virtual environment can be set in the [video_segmentation.py](segmentation/video_segmentation.py#L7:L10) file. Please note that the paths for the project are given relatively to the parent directory of this project, while the path of the virtual environments is given relatively to the root directory of the corresponding project.
+The path of the TransNetV2 project, along with its corresponding virtual environment can be set in the [video_segmentation.py](segmentation/video_segmentation.py#L7:L10) file. Please note that the path for the project is given relatively to the parent directory of this project, while the path of the virtual environment is given relatively to the root directory of the corresponding project.
 
 If there is a need to use the default paths:
 - Set the name of the root directory of the project to *TransNetV2* and place it in the parent directory of this project.
@@ -36,14 +35,9 @@ This will result in the following project structure:
 ## Data
 <div align="justify">
 
-Original videos for each dataset are available in the dataset providers' webpages: 
-- <a href="https://github.com/yalesong/tvsum" target="_blank"><img align="center" src="https://img.shields.io/badge/Dataset-TVSum-green"/></a> <a href="https://gyglim.github.io/me/vsum/index.html#benchmark" target="_blank"><img align="center" src="https://img.shields.io/badge/Dataset-SumMe-blue"/></a>
-- <a href="https://zenodo.org/records/4884870" target="_blank"><img align="center" src="https://img.shields.io/badge/Datasets-TVSum & SumMe-blue"/></a>
+The videos of the SumMe and TVSum datasets are available [here](https://zenodo.org/records/4884870). These videos have to be placed into the `SumMe` and `TVSum` directories of the [data](data) folder. Following, they have to be renamed according to the utilized naming format, using the provided [rename_videos.py](rename_videos.py) script.
 
-
-These videos have to be placed into the `SumMe` and `TVSum` directories of the [data](data) folder.
-
-The extracted deep features for the SumMe and TVSum videos are already available into aforementioned directories. In case there is a need to extract these deep features from scratch (and store them into h5 files), please run the [feature_extraction.py](features/feature_extraction.py) script. Otherwise, an h5 file will be produced automatically for each video and stored into the relevant directory of the [data](data) folder.
+The extracted deep features for the SumMe and TVSum videos are already available into the aforementioned directories. In case there is a need to extract these deep features from scratch (and store them into h5 files), please run the [feature_extraction.py](features/feature_extraction.py) script. Otherwise, an h5 file will be produced automatically for each video and stored into the relevant directory of the [data](data) folder.
 
 The produced h5 files have the following structure:
 ```Text
@@ -53,84 +47,67 @@ The produced h5 files have the following structure:
 ```
 </div>
 
-The utilized pre-trained models of the [CA-SUM](https://github.com/e-apostolidis/CA-SUM) method, are available within the [models](/explanation/models) directory. Their performance, as well as some other training details, are reported below.
+The utilized pre-trained models of the [CA-SUM](https://github.com/e-apostolidis/CA-SUM) method are available within the [models](/explanation/models) directory. Their performance, as well as some other training details, are reported below.
 Model| F1 score | Epoch | Split | Reg. Factor
 | --- | --- | --- | --- | --- |
-summe.pkl | 59.138 | 383 | 4 | 0.5
-tvsum.pkl | 63.462 | 44 | 4 | 0.5
+summe.pkl | 59.14 | 383 | 4 | 0.5
+tvsum.pkl | 63.46 | 44 | 4 | 0.5
 
 ## Producing explanations
 <div align="justify">
 
-To produce visual and text explanations, and faithfulness and plausibility scores of the SumMe and TVSum videos, please execute the following commands:
+To produce visual explanations for the videos of the SumMe and TVSum datasets, and compute faithfulness (Disc+) scores for these explanations, please run the following command:
 ```
 bash explain.sh
 ```
 
-For each video in the datasets, this command will:
-- create a new folder (if it does not already exist) in the directory where the video is stored
-- extract deep features and define the shots of the video, and store them in h5 and txt files, accordingly (if the files containing these data do not already exist)
-- create a subfolder, named **explanation** with the following information: 
-  - explanation_and_top_fragments.txt: contains the top fragments (default=3) for each XAI method and the top summary fragments
-  - fragments_explanation.txt: contains the ranges of the top- and bottom- scoring explanation fragments for each XAI method 
-  - fragments_explanation_evaluation_metrics.csv: contains the scores of the metric Disc+ for each XAI method for each manner (one-by-one or sequentially (batch) )
-  - indexes.csv: contains the indices of the explanation fragments for each XAI method
+For each video in these datasets, this command:
+- creates a new folder (if it does not already exist) in the directory where the video is stored,
+- extracts deep features from the video frames and identifies the shots of the video, and stores the obtained data in h5 and txt files, respectively (if the files containing these data do not already exist),
+- and creates a subfolder, named **visual_explanation**, with the following files: 
+  - "_explanation_and_top_fragments.txt_": contains information (indices of the start and end frame) for the selected video fragments by each explanation method (max default = 3), as well as for the fragments of the video summary (default = 3)
+  - "_fragments_explanation.txt_": contains a ranking (in descending order) of the video fragments (represented by the indices of the start and end frame) according to the assigned scores by each explanation method
+  - "_fragments_explanation_evaluation_metrics.csv_": contains the computed faithfulness (Disc+) scores for each explanation method
+  - "_indexes.csv_": contains the indices of the video fragments ranked (in descending order) according to the assigned scores by each explanation method
 
-For an individual video run:
-```
-python explanation/explain.py --model MODEL_PATH --video VIDEO_PATH --fragments NUM_OF_FRAGMENTS (optional, default=3)
-```
-where, `MODEL_PATH` refers to the path of the trained summarization model, `VIDEO_PATH` refers to the path of the video, and `NUM_OF_FRAGMENTS` refers to the number of utilized video fragments for generating the explanations.
-
-Then run the following command:
+Then, to produce textual descriptions of the created visual explanations, run the following command:
 ```
 python explanation/text_explanation.py
 ```
-This will at first prepare each video folder creating the necessary files for the generation of the textual explanations and summary:
-- video_$_attention_explanations.txt: contains the top scoring fragments of attention method in temporal order
-- video_$_attention_importance.txt: contains the top scoring fragments of attention method
-- video_$_lime_explanations.txt: contains the top scoring fragments of lime method in temporal order
-- video_$_lime_importance.txt: contains the top scoring fragments of lime method
-- video_$_shots.txt: contains the shot segmentation of the video (rename of shots.txt or opt_shots.txt)
-- video_$_sum_shots.txt: contains the video summary top fragments.
 
-Then it will call subprocess (LLaVA), copy the data the working directory there, get the text explanation and the similarities scores for each video in each video subfolder, copy the results back to data folder and clean the data folder at working directory:
-- video_$_text.txt: Contains the generated textual explanation for each XAI method and for the summary
-- video_$_similarities.csv: Contains the SimCSE and SBERT similarity scores between the desired comparisons
+For each video in these datasets, this command:
+- creates another subfolder, named **textual_explanation**, with the following files:
+  - "_video_id_attention_explanations.txt_": contains the selected video fragments by the attention-based explanation method, in temporal order (i.e. based on their occurence in the video)
+  - "_video_id_attention_importance.txt_": contains the selected video fragments by the attention-based explanation method, ranked based on the assigned scores
+  - "_video_id_lime_explanations.txt_": contains the selected video fragments by the LIME-based explanation method, in temporal order (i.e. based on their occurence in the video)
+  - "_video_id_lime_importance.txt_": contains the selected video fragments by the LIME-based explanation method, ranked based on the assigned scores
+  - "_video_id_shots.txt_": contains information (indices of the start and end frame) about the fragments of the video (rename of shots.txt or opt_shots.txt)
+  - "_video_id_sum_shots.txt_": contains information (indices of the start and end frame) about the fragments of the video summary
+- and calls a subprocess, named LLAVA, which creates the following files:
+  - "_video_id_text.txt_": contains the generated textual descriptions of the visual explanations and the video summary
+  - "_video_id_similarities.csv_": contains the computed SimCSE and SBERT scores for these textual explanations
+
+
+To produce visual explanations for an individual video using both the model-specific (attention-based) and model-agnostic (LIME-based) methods of the framework, please run:
+```
+python explanation/explain.py --model MODEL_PATH --video VIDEO_PATH --fragments NUM_OF_FRAGMENTS
+```
+where, `MODEL_PATH` refers to the path of the trained summarization model, `VIDEO_PATH` refers to the path of the video, and `NUM_OF_FRAGMENTS` refers to the number of utilized video fragments for generating the explanations (optional; default = 3).
+
+Then, to produce textual explanations for this video, please run:
+```
+python explanation/text_explain.py --model MODEL_PATH --video VIDEO_PATH --fragments NUM_OF_FRAGMENTS
+```
 
 </div>
 
 ## Evaluation results
 <div align="justify">
 
-This extended framework was evaulated on 2 subsets of SumMe and TVSum datasets. Video Set 1 contains the videos that have at least 1 top-scoring fragment by the explanation methods. 
-Video Set 2 includes a subset of videos that have at least 3 top-scoring fragments by the explanation methods.
-
-To get the evaluation results, run:
-```
-python explanation/combine_fragment_evaluation_files.py
-```
-This will compute the average of faithfulness (in terms of Discoverability+) of the obtained visual explanations from the fragments_explanation_evaluation_metrics.csv files of each video and will create a folder “final_scores” with the *.csv files containing the averages of the metrics and more particularly:
-- Attention Discoverability+ (One by One)
-- Attention Discoverability+ (Sequentially)
-- Lime Discoverability+ (One by One)
-- Lime Discoverability+ (Sequentially)
-
-and
-```
-python explanation/combine_similarites_files.py
-```
-Similarly, this will compute the average of the plausibility of the obtained explanations for each explanation method (Attention or LIME) for each sentence embedding method (SimCSE or SBERT). For VideoSet2 it will do the same for both approaches. More particularly it will compute the following explanation/summary similarity scores:
-- SimCSE - Attention
-- SBERT - Attention
-- SimCSE - LIME
-- SBERT - LIME
-
-The code runs for Video Set 2 by default. If you want to run the evaluation for Video Set 1 you have to clear the data folder and run with the following changes:
+To get the overall evaluation results (for all videos of the used datasets) about the **faithfulness** (Disc+) of the produced **visual explanations**, please run the [combine_fragment_evaluation_files.py](/explanation/combine_fragment_evaluation_files.py) script. The final scores are saved into the `final_scores` directory, that is placed inside the [explanation](/explanation) folder. Then, to get the overall evaluation results about the **plausibility** of the produced **textual explanations**, please run the [combine_similarities_files.py](explanation/combine_similarities_files.py) script. Please note that the code runs for the videos of Video Set 2 by default, i.e. for the TVSum videos that have at least 3 top-scoring fragments by the explanation methods. To run the evaluation for the videos of Video Set 1 (i.e., for the videos of the SumMe and TVSum datasets, that have at least 1 top-scoring fragment by the explanation methods), please re-run the code after performing the following changes:
 - [text_explanation.py](explanation/text_explanation.py#L22) at line 22 change _"evaluate2.py"_ to _"evaluate.py"_
-- [combine_fragment_evaluation_files.py](explanation/combine_fragment_evaluation_files.py#L25) at line 25 change videoset_key from _"VideoSet2"_ to _"VideoSet1"_
-- [combine_similarities_files.py](explanation/combine_similarities_files.py#L57) at line 57 change videoset from _"VideoSet2"_ to _"VideoSet1"_
-
+- [combine_fragment_evaluation_files.py](explanation/combine_fragment_evaluation_files.py#L25) at line 25 change "videoset_key" from _"VideoSet2"_ to _"VideoSet1"_
+- [combine_similarities_files.py](explanation/combine_similarities_files.py#L57) at line 57 change "videoset" from _"VideoSet2"_ to _"VideoSet1"_
 
 ## Citation
 <div align="justify">
@@ -146,7 +123,7 @@ BibTeX:
 @inproceedings{eleftheriadis2025cbmi,
       title={An Experimental Study on Generating Plausible Textual Explanations for Video Summarization}, 
       author={Thomas Eleftheriadis and Evlampios Apostolidis and Vasileios Mezaris},
-      booktitle={IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI 2025)},
+      booktitle={2025 IEEE Int. Conf. on Content-Based Multimedia Indexing (CBMI)},
       year={2025},
       organization={IEEE}
 }
@@ -154,7 +131,7 @@ BibTeX:
 
 <div align="justify">
 
-Yoy may also want to have a look at our previous publication, where extracting non-textual explanations was presented:
+You may also want to have a look at our previous publication, where extracting non-textual explanations was presented:
 
 K. Tsigos, E. Apostolidis, V. Mezaris, **"An Integrated Framework for Multi-Granular Explanation of Video Summarization"**, Frontiers in Signal Processing, vol. 4, 2024. [DOI:10.3389/frsip.2024.1433388](https://doi.org/10.3389/frsip.2024.1433388)
 </div>
