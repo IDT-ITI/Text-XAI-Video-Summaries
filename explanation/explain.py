@@ -128,29 +128,30 @@ def explain_fragments(features, model, video_path, num_of_fragments, explanation
         lime_explanation_positive = lime_explanation_positive[np.where(lime_explanation_positive != -1)]
 
     else:
-        #Otherwise compute the explanations
+        # Otherwise compute the explanations
         # Compute the fragment-level explanation for Attention
         attention_explanation = explain_with_attention(features, model, fragment_frames_index)
 
-        #Create a fragment-level LIME explanator
+        # Create a fragment-level LIME explanator
         explainer = LimeFragmentExplainer()
-        #Compute the fragment-level explanation for LIME
+        # Compute the fragment-level explanation for LIME
         explanation = explainer.explain_instances(20000, features, fragment_frames_index, model, len(fragments))
-        #Top positive scoring fragments
+        # Top positive scoring fragments
         lime_explanation_positive = np.array([x[0] for x in explanation if x[1] > 0])
-        #Top negative scoring fragments
+        # Top negative scoring fragments
         lime_explanation_negative = np.array([x[0] for x in explanation if x[1] < 0])
-        #(unlike Attention where the first and the last fragments of the results are the top- and bottom-scoring respectively,
-        #LIME returns seperate results for fragments that contribute positively or negatively to the explanation)
+        # (unlike Attention where the first and the last fragments of the results are the top- and bottom-scoring respectively,
+        # LIME returns seperate results for fragments that contribute positively or negatively to the explanation)
 
-        #Create a dataframe to save the indexes of the explanation fragments for each XAI method
+        # Create a dataframe to save the indexes of the explanation fragments for each XAI method
         df = pd.DataFrame({'Attention': attention_explanation, 'Lime Positive': -1, 'Lime Negative': -1})
         df.loc[:len(lime_explanation_positive) - 1, 'Lime Positive'] = lime_explanation_positive
         df.loc[:len(lime_explanation_negative) - 1, 'Lime Negative'] = lime_explanation_negative
-        #Save the dataframe to a csv file
+
+        # Save the dataframe to a csv file
         df.to_csv(explanation_path + "indexes.csv", index=False)
 
-        #Save the ranges of the top- and bottom-scoring explanation fragments to txt file for each XAI method
+        # Save the ranges of the top- and bottom-scoring explanation fragments to txt file for each XAI method
         with open(explanation_path + "fragments_explanation.txt", "w") as output:
             output.write("Attention:\n")
             output.write("\n".join([','.join(str(y) for y in p) for p in fragments[attention_explanation]]))
@@ -164,28 +165,25 @@ def explain_fragments(features, model, video_path, num_of_fragments, explanation
                 output.write("\n".join([','.join(str(y) for y in p) for p in fragments[lime_explanation_negative]]))
                 output.write("\n")
 
-        #Create a metric calculator object
+        # Create a metric calculator object
         metrics_calculator = MetricsFragmentCalculator(model, features, fragment_frames_index)
-        #Compute the disc plus, disc minus and sanity violation scores for the Attention explanation
+        # Compute the disc plus, disc minus and sanity violation scores for the Attention explanation
         discoverability_plus_attention = metrics_calculator.compute_discoverability(attention_explanation, 3)
 
-        #Do the same for the LIME explanation
+        # Do the same for the LIME explanation
         metrics_calculator = MetricsFragmentCalculator(model, features, fragment_frames_index)
         discoverability_plus_lime = metrics_calculator.compute_discoverability(lime_explanation_positive, 3)
 
-        #Create a dataframe to save the scores
+        # Create a dataframe to save the scores
         df = pd.DataFrame()
 
-        #Fill the dataframe with the scores
-        df['Attention Disc Plus One By One'] = discoverability_plus_attention[0] + [np.nan] * (3 - len(discoverability_plus_attention[0]))
-        df['Attention Disc Plus Sequentially'] = discoverability_plus_attention[1] + [np.nan] * (3 - len(discoverability_plus_attention[1]))
+        df['Attention Disc Plus'] = discoverability_plus_attention[0] + [np.nan] * (3 - len(discoverability_plus_attention[0]))
+        df['Lime Disc Plus'] = discoverability_plus_lime[0] + [np.nan] * (3 - len(discoverability_plus_lime[0]))
 
-        df['Lime Disc Plus One By One'] = discoverability_plus_lime[0] + [np.nan] * (3 - len(discoverability_plus_lime[0]))
-        df['Lime Disc Plus Sequentially'] = discoverability_plus_lime[1] + [np.nan] * (3 - len(discoverability_plus_lime[1]))
 
         df[''] = ['Top 1', 'Top 2', 'Top 3']
         df.set_index('', inplace=True)
-        #Save the dataframe to a csv file
+        # Save the dataframe to a csv file
         df.to_csv(explanation_path + "fragments_explanation_evaluation_metrics.csv")
 
     # For each of the different fragment explanation method
@@ -208,60 +206,76 @@ def explain_fragments(features, model, video_path, num_of_fragments, explanation
         print("Invalid Explanation Method!")
         sys.exit(0)
 
-    #Return the fragments, the numbers of the sampled frames and their indexes
+    # Return the fragments, the numbers of the sampled frames and their indexes
     return [explanation_fragments,explanation_fragment_frames,explanation_fragment_frames_index]
 
 
 def explain(original_result, features, model, video_path, num_of_fragments, explanation_path):
+
     attention_fragments = explain_fragments(features, model, video_path, num_of_fragments, explanation_path, explanation_method="Attention")
     lime_fragments = explain_fragments(features, model, video_path, num_of_fragments, explanation_path, explanation_method="LIME")
     original_result_copy = [float(s) for s in original_result]
     top_fragments = getFragments(video_path, original_result_copy, num_of_fragments, True)
 
-    # Prepare output
-    def format_fragments(label, fragments):
-        lines = [f"{label}:"]
-        lines += [f"{start}, {end}" for start, end in fragments[0]]
-        return lines
+    def format_fragments(fragments):
+        return [f"{start}, {end}" for start, end in fragments[0]]
 
-    output_lines = []
-    output_lines += format_fragments("Attention", attention_fragments)
-    output_lines += format_fragments("LIME", lime_fragments)
-    output_lines += format_fragments("Top Fragments", top_fragments)
+    def sort_fragments(fragments):
+        return sorted(fragments, key=lambda x: int(x.split(",")[0]))
+
+    # Collect sections directly in memory
+    sections = {
+        "Attention": format_fragments(attention_fragments),
+        "LIME": format_fragments(lime_fragments),
+        "Top Fragments": format_fragments(top_fragments),
+    }
+
+    attention = sections["Attention"]
+    lime = sections["LIME"]
+    top = sections["Top Fragments"]
+
+    # Prepare outputs
+    out_files = {
+        "sum_shots.txt": sort_fragments(top),
+        "attention_importance.txt": attention,
+        "attention_explanations.txt": sort_fragments(attention),
+        "lime_importance.txt": lime,
+        "lime_explanations.txt": sort_fragments(lime),
+    }
 
     # Ensure output directory exists
     os.makedirs(explanation_path, exist_ok=True)
 
-    # Write to file
-    file_path = os.path.join(explanation_path, "explanation_and_top_fragments.txt")
-    with open(file_path, "w") as f:
-        for line in output_lines:
-            f.write(line + "\n")
+    # Write outputs
+    for filename, content in out_files.items():
+        filepath = os.path.join(explanation_path, filename)
+        with open(filepath, "w") as f:
+            f.write("\n".join([x.strip() for x in content]) + "\n")
 
 
 if __name__=='__main__':
 
-    #Parse the running parameters
+    # Parse the running parameters
     parser = argparse.ArgumentParser(description = "Usage")
-    #Specify the path of the video summarizaton model
+    # Specify the path of the video summarizaton model
     parser.add_argument("-m", "--model", help = "Path of the video summarization model", required = True)
-    #Specify the path of the video to explain
+    # Specify the path of the video to explain
     parser.add_argument("-v", "--video", help = "Path of the video to explain", required = True)
-    #Specify number of temporal fragments to explain, default values is 3
+    # Specify number of temporal fragments to explain, default values is 3
     parser.add_argument("-f", "--fragments", help="Number of temporal fragments to explain", required=False, default=3)
     argument = parser.parse_args()
 
-    #Create the necessary path to save all of the needed files to explain the video if it doesn't already exists
+    # Create the necessary path to save all of the needed files to explain the video if it doesn't already exists
     save_path = argument.video[:-4]
     if (not (os.path.exists(save_path))):
         os.mkdir(save_path)
 
-    #Load the model from the path
+    # Load the model from the path
     model = load_model(argument.model)
-    #Load the deep features of the sampled frames of the video
+    # Load the deep features of the sampled frames of the video
     data = load_data(argument.video,model)
-    #Get the original video summarization frames importance scores
+    # Get the original video summarization frames importance scores
     result = predict(data, model)
 
-    #Explain the video
-    explain(result, data, model, argument.video, int(argument.fragments), save_path+'/explanation/')
+    # Explain the video
+    explain(result, data, model, argument.video, int(argument.fragments), save_path+'/visual_explanation/')

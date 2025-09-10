@@ -96,6 +96,6 @@ def extract_fragment_features(frames,batch_size=64):
 
 if __name__ == '__main__':
     for i in range(25):
-        extract_features('../data/SumMe/video_'+str(i+1)+'.mp4','../data/SumMe/')
+        extract_features('../data/SumMe/video_' + str(i+1) +'.mp4', '../data/SumMe/')
     for i in range(50):
-        extract_features('../data/TVSum/video_'+str(i+1)+'.mp4','../data/TVSum/')
+        extract_features('../data/TVSum/video_' + str(i+1) +'.mp4', '../data/TVSum/')
