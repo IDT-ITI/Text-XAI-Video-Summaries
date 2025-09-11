@@ -11,7 +11,7 @@ output_dir = os.path.join(current_dir, "final_scores")
 os.makedirs(output_dir, exist_ok=True)
 
 # Exclusions
-summe_excluded_top_1 = {1, 3, 5, 11, 13, 16, 20, 24, 25}  # only for top-1
+summe_excluded_top_1 = {1, 3, 5, 11, 13, 16, 20, 24, 25}
 tvsum_excluded_top_1 = {3, 15, 21}
 tvsum_excluded_top_3 = {1, 3, 6, 12, 15, 21, 29, 37, 39, 41, 46}
 

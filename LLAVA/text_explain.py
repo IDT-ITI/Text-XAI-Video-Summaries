@@ -86,6 +86,7 @@ def read_video_pyav(container, intervals, downsample_rate, num_frames):
         container (`av.container.input.InputContainer`): PyAV container.
         intervals (list of tuples): A list of tuples, where each tuple represents a start and end frame index (inclusive) to extract from the video.
         downsample_rate (int): The rate at which frames are sampled.
+        num_frames (int): max frames
     Returns:
         result (np.ndarray): np array of decoded frames of shape (num_frames, height, width, 3).
     """
@@ -203,7 +204,6 @@ def run(video_file, video_prompt, model, processor):
         video_prompt (str): Text prompt to be used for video description generation.
     """
 
-
     video_conversation = [
         {
             "role": "user",
@@ -218,10 +218,9 @@ def run(video_file, video_prompt, model, processor):
     video_prompt_length = len('user ' + video_prompt + 'assistant ')
 
     # Split into directory and filename
-    video_dir = video_file[:-4]  # ./data/SumMe/video_10
-    # video_file = os.path.basename(video_file)  # video_10.mp4
-    video_id = os.path.basename(video_dir)  # video_10
-    visual_expl_dir = os.path.join(video_dir, "visual_explanation")        # TO DO: change to , "visual_explanation")
+    video_dir = video_file[:-4]
+    video_id = os.path.basename(video_dir)
+    visual_expl_dir = os.path.join(video_dir, "visual_explanation")
 
     # Save result as a .txt file alongside the video (or wherever you prefer)
     text_expl_dir = os.path.join(video_dir, "text_explanation")
@@ -236,14 +235,12 @@ def run(video_file, video_prompt, model, processor):
 
     container = av.open(video_file)
 
-    # Assuming the .txt files have the same name as the video. Txt files contain the fragments in temporal order
+    # txt files with the fragments of the summary and the explanation methods (both in temportal order and importance order)
     video_sum_txt_path = os.path.join(visual_expl_dir, f"sum_shots.txt")
     attention_txt_file_path = os.path.join(visual_expl_dir, f"attention_explanations.txt")
     lime_txt_file_path = os.path.join(visual_expl_dir, f"lime_explanations.txt")
-
-    # Attention and LIME top txt files contain the fragments in order of importance as calculated by CA-SUM-XAI
-    attention_top_txt_path = os.path.join(visual_expl_dir, f"attention_importance.txt") ############
-    lime_top_txt_path = os.path.join(visual_expl_dir, f"lime_importance.txt") ###########
+    attention_top_txt_path = os.path.join(visual_expl_dir, f"attention_importance.txt")
+    lime_top_txt_path = os.path.join(visual_expl_dir, f"lime_importance.txt")
 
     # Convert fragment ranges to tuples
     video_sum_indices = convert_ranges_to_tuples(video_sum_txt_path)
@@ -251,109 +248,149 @@ def run(video_file, video_prompt, model, processor):
     lime_expl_indices = convert_ranges_to_tuples(lime_txt_file_path)
     attention_top_fragments = convert_ranges_to_tuples(attention_top_txt_path)
     attention_top_1_fragment = [attention_top_fragments[0]]
-    attention_top_2_fragment = [attention_top_fragments[1]]
-    attention_top_3_fragment = [attention_top_fragments[2]]
+    attention_top_2_fragment = [attention_top_fragments[1]] if len(attention_top_fragments) >= 2 else []
+    attention_top_3_fragment = [attention_top_fragments[2]] if len(attention_top_fragments) >= 3 else []
     lime_top_fragments = convert_ranges_to_tuples(lime_top_txt_path)
     lime_top_1_fragment = [lime_top_fragments[0]]
-    lime_top_2_fragment = [lime_top_fragments[1]]
-    lime_top_3_fragment = [lime_top_fragments[2]]
+    lime_top_2_fragment = [lime_top_fragments[1]] if len(lime_top_fragments) >= 2 else []
+    lime_top_3_fragment = [lime_top_fragments[2]] if len(lime_top_fragments) >= 3 else []
 
     device = next(model.parameters()).device
     video_prompt = processor.apply_chat_template(video_conversation, add_generation_prompt=True)
 
-
     video_sum = read_video_pyav(container, video_sum_indices, downsample_rate=15, num_frames=150)
-    video_expl_attention = read_video_pyav(container, attention_expl_indices, downsample_rate=15, num_frames=150)
-    video_expl_lime = read_video_pyav(container,lime_expl_indices, downsample_rate=15, num_frames=150)
+    video_expl_attention = read_video_pyav(container, attention_expl_indices, downsample_rate=15, num_frames=150) if len(attention_expl_indices) >= 3 else None
+    video_expl_lime = read_video_pyav(container, lime_expl_indices, downsample_rate=15, num_frames=150) if len(lime_expl_indices) >= 3 else None
     attention_top_1_video = read_video_pyav(container, attention_top_1_fragment, downsample_rate=15, num_frames=150)
-    attention_top_2_video = read_video_pyav(container, attention_top_2_fragment, downsample_rate=15, num_frames=150)
-    attention_top_3_video = read_video_pyav(container, attention_top_3_fragment, downsample_rate=15, num_frames=150)
+    attention_top_2_video = read_video_pyav(container, attention_top_2_fragment, downsample_rate=15, num_frames=150) if attention_top_2_fragment is not None else None
+    attention_top_3_video = read_video_pyav(container, attention_top_3_fragment, downsample_rate=15, num_frames=150) if attention_top_3_fragment is not None else None
     lime_top_1_video = read_video_pyav(container, lime_top_1_fragment, downsample_rate=15, num_frames=150)
-    lime_top_2_video = read_video_pyav(container, lime_top_2_fragment, downsample_rate=15, num_frames=150)
-    lime_top_3_video = read_video_pyav(container, lime_top_3_fragment, downsample_rate=15, num_frames=150)
+    lime_top_2_video = read_video_pyav(container, lime_top_2_fragment, downsample_rate=15, num_frames=150) if lime_top_2_fragment is not None else None
+    lime_top_3_video = read_video_pyav(container, lime_top_3_fragment, downsample_rate=15, num_frames=150) if lime_top_3_fragment is not None else None
 
-    if any(v is None for v in [video_sum, video_expl_attention, video_expl_lime,
-                               attention_top_1_video, attention_top_2_video, attention_top_3_video,
-                               lime_top_1_video, lime_top_2_video, lime_top_3_video]):
+    if any(v is None for v in [video_sum, attention_top_1_video, lime_top_1_video]):
         return
 
     # Process video, summary, explanations and individual fragments
     video_summary = process_video_fragment(model, processor, device, video_sum, video_prompt, video_prompt_length)
-    attention_explanation = process_video_fragment(model, processor, device, video_expl_attention, video_prompt, video_prompt_length)
-    lime_explanation = process_video_fragment(model, processor, device, video_expl_lime, video_prompt, video_prompt_length)
+    attention_explanation = process_video_fragment(model, processor, device, video_expl_attention, video_prompt, video_prompt_length) if video_expl_attention is not None else None
+    lime_explanation = process_video_fragment(model, processor, device, video_expl_lime, video_prompt, video_prompt_length) if video_expl_lime is not None else None
     attention_top_1 = process_video_fragment(model, processor, device, attention_top_1_video, video_prompt, video_prompt_length)
-    attention_top_2 = process_video_fragment(model, processor, device, attention_top_2_video, video_prompt, video_prompt_length)
-    attention_top_3 = process_video_fragment(model, processor, device, attention_top_3_video, video_prompt, video_prompt_length)
+    attention_top_2 = process_video_fragment(model, processor, device, attention_top_2_video, video_prompt, video_prompt_length) if attention_top_2_video is not None else None
+    attention_top_3 = process_video_fragment(model, processor, device, attention_top_3_video, video_prompt, video_prompt_length) if attention_top_3_video is not None else None
     lime_top_1 = process_video_fragment(model, processor, device, lime_top_1_video, video_prompt, video_prompt_length)
-    lime_top_2 = process_video_fragment(model, processor, device, lime_top_2_video, video_prompt, video_prompt_length)
-    lime_top_3 = process_video_fragment(model, processor, device, lime_top_3_video, video_prompt, video_prompt_length)
+    lime_top_2 = process_video_fragment(model, processor, device, lime_top_2_video, video_prompt, video_prompt_length) if lime_top_2_video is not None else None
+    lime_top_3 = process_video_fragment(model, processor, device, lime_top_3_video, video_prompt, video_prompt_length) if lime_top_3_video is not None else None
 
-    attention_alternative_explanation = create_alternative_sequential_explanation(model, processor, device, attention_top_1[0], attention_top_2[0], attention_top_3[0], prompt_2, attention_top_fragments)
-    lime_alternative_explanation = create_alternative_sequential_explanation(model, processor, device, lime_top_1[0], lime_top_2[0], lime_top_3[0], prompt_2, lime_top_fragments)
+    attention_alternative_explanation = (
+        create_alternative_sequential_explanation(model, processor, device,
+                                                  attention_top_1[0], attention_top_2[0], attention_top_3[0],
+                                                  prompt_2, attention_top_fragments)
+        if attention_top_1 is not None and attention_top_2 is not None and attention_top_3 is not None
+        else None
+    )
+    lime_alternative_explanation = (
+        create_alternative_sequential_explanation(model, processor, device,
+                                                  lime_top_1[0], lime_top_2[0], lime_top_3[0],
+                                                  prompt_2, lime_top_fragments)
+        if lime_top_1 is not None and lime_top_2 is not None and lime_top_3 is not None
+        else None
+    )
 
     # Save the result to the output folder
     with open(video_result_path, 'a') as file:
         file.write('video_summary:\n')
         file.write('\n'.join(video_summary[1]) + '\n\n')
-        file.write('attention_explanation:\n')
-        file.write('\n'.join(attention_explanation[1]) + '\n\n')
-        file.write('alternative_attention_explanation:\n')
-        file.write('\n'.join(attention_alternative_explanation[1]) + '\n\n')
-        file.write('lime_explanation:\n')
-        file.write('\n'.join(lime_explanation[1]) + '\n\n')
-        file.write('alternative_lime_explanation:\n')
-        file.write('\n'.join(lime_alternative_explanation[1]) + '\n\n')
+        if attention_explanation:
+            file.write('attention_explanation:\n')
+            file.write('\n'.join(attention_explanation[1]) + '\n\n')
+        if attention_alternative_explanation:
+            file.write('alternative_attention_explanation:\n')
+            file.write('\n'.join(attention_alternative_explanation[1]) + '\n\n')
+        if lime_explanation:
+            file.write('lime_explanation:\n')
+            file.write('\n'.join(lime_explanation[1]) + '\n\n')
+        if lime_alternative_explanation:
+            file.write('alternative_lime_explanation:\n')
+            file.write('\n'.join(lime_alternative_explanation[1]) + '\n\n')
         file.write('attention_top_1:\n')
         file.write('\n'.join(attention_top_1[1]) + '\n\n')
         file.write('lime_top_1:\n')
         file.write('\n'.join(lime_top_1[1]) + '\n\n')
 
+    # If there are 3 fragments for each explanation method and therefore the explanations exist
+    if attention_explanation and lime_explanation and attention_alternative_explanation and lime_alternative_explanation:
 
-    sentences = []
+        sentences = []
+        sentences.append(video_summary[0])                      # 0
+        sentences.append(attention_explanation[0])              # 1
+        sentences.append(attention_alternative_explanation[0])  # 2
+        sentences.append(lime_explanation[0])                   # 3
+        sentences.append(lime_alternative_explanation[0])       # 4
+        sentences.append(attention_top_1[0])                    # 5
+        sentences.append(lime_top_1[0])                         # 6
 
-    sentences.append(video_summary[0])                      # 0
-    sentences.append(attention_explanation[0])              # 1
-    sentences.append(attention_alternative_explanation[0])  # 2
-    sentences.append(lime_explanation[0])                   # 3
-    sentences.append(lime_alternative_explanation[0])       # 4
-    sentences.append(attention_top_1[0])                    # 5
-    sentences.append(lime_top_1[0])                         # 6
+        # compute the SimCSE similarities of each explanation type with the video summary
+        simcse_summary_attention = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[1]))
+        simcse_summary_lime = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[3]))
+        simcse_summary_alternative_attention = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[2]))
+        simcse_summary_alternative_lime = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[4]))
+        simcse_summary_attention_top_1 = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[5]))
+        simcse_summary_lime_top_1 = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[6]))
 
+        # Create embeddings with SBERT model and similarity matrix
+        embeddings = sbert_model.encode(sentences)
+        sbert_similarities = sbert_model.similarity(embeddings, embeddings)
 
-    # compute the SimCSE similarities of each explanation type with the video summary
-    simcse_summary_attention = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[1]))
-    simcse_summary_lime = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[3]))
-    simcse_summary_alternative_attention = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[2]))
-    simcse_summary_alternative_lime = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[4]))
+        # Gather all results
+        similarities_results = [[round(sbert_similarities[0][1].item(), 5), simcse_summary_attention,
+                                 round(sbert_similarities[0][3].item(), 5), simcse_summary_lime,
+                                 round(sbert_similarities[0][2].item(), 5), simcse_summary_alternative_attention,
+                                 round(sbert_similarities[0][4].item(), 5), simcse_summary_alternative_lime,
+                                 round(sbert_similarities[0][5].item(), 5), simcse_summary_attention_top_1,
+                                 round(sbert_similarities[0][6].item(), 5), simcse_summary_lime_top_1
+                                 ]]
 
-    simcse_summary_attention_top_1 = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[5]))
-    simcse_summary_lime_top_1 = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[6]))
+        # Create DataFrame columns to hold the similarity results
+        similarity_columns = ['sbert_attention_sum', 'simcse_attention_sum',
+                              'sbert_lime_sum', 'simcse_lime_sum',
+                              'sbert_alternative_attention_sum', 'simcse_alternative_attention_sum',
+                              'sbert_alternative_lime_sum', 'simcse_alternative_lime_sum',
+                              'sbert_attention_top_1_sum', 'simcse_attention_top_1_sum',
+                              'sbert_lime_top_1_sum', 'simcse_lime_top_1_sum'
+                              ]
+        # Create the dataframe with the scores
+        df = pd.DataFrame(similarities_results, columns=similarity_columns)
+        output_file = os.path.join(text_expl_dir, f"{video_id}_similarities.csv")
+        df.to_csv(output_file, index=False)
 
-    # Create embeddings with SBERT model and similarity matrix
-    embeddings = sbert_model.encode(sentences)
-    sbert_similarities = sbert_model.similarity(embeddings, embeddings)
+    else:
+        sentences = []
+        sentences.append(video_summary[0])      # 0
+        sentences.append(attention_top_1[0])    # 1
+        sentences.append(lime_top_1[0])         # 2
 
-    # Gather all results
-    similarities_results = [[round(sbert_similarities[0][1].item(), 5), simcse_summary_attention,
-                             round(sbert_similarities[0][3].item(), 5), simcse_summary_lime,
-                             round(sbert_similarities[0][2].item(), 5), simcse_summary_alternative_attention,
-                             round(sbert_similarities[0][4].item(), 5), simcse_summary_alternative_lime,
-                             round(sbert_similarities[0][5].item(), 5), simcse_summary_attention_top_1,
-                             round(sbert_similarities[0][6].item(), 5), simcse_summary_lime_top_1
-                            ]]
+        simcse_summary_attention_top_1 = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[1]))
+        simcse_summary_lime_top_1 = compute_simcse_similarity(get_embeddings(sentences[0]), get_embeddings(sentences[2]))
 
-    # Create DataFrame columns to hold the similarity results
-    similarity_columns = ['sbert_attention_sum', 'simcse_attention_sum',
-                          'sbert_lime_sum', 'simcse_lime_sum',
-                          'sbert_alternative_attention_sum', 'simcse_alternative_attention_sum',
-                          'sbert_alternative_lime_sum', 'simcse_alternative_lime_sum',
-                          'sbert_attention_top_1_sum', 'simcse_attention_top_1_sum',
-                          'sbert_lime_top_1_sum', 'simcse_lime_top_1_sum'
-                          ]
-    # Create the dataframe with the scores
-    df = pd.DataFrame(similarities_results, columns=similarity_columns)
-    output_file = os.path.join(text_expl_dir, f"{video_id}_similarities.csv")
-    df.to_csv(output_file, index=False)
+        # Create embeddings with SBERT model and similarity matrix
+        embeddings = sbert_model.encode(sentences)
+        sbert_similarities = sbert_model.similarity(embeddings, embeddings)
+
+        # Gather all results
+        similarities_results = [[round(sbert_similarities[0][1].item(), 5), simcse_summary_attention_top_1,
+                                 round(sbert_similarities[0][2].item(), 5), simcse_summary_lime_top_1
+                                 ]]
+
+        # Create DataFrame columns to hold the similarity results
+        similarity_columns = ['sbert_attention_top_1_sum', 'simcse_attention_top_1_sum',
+                              'sbert_lime_top_1_sum', 'simcse_lime_top_1_sum'
+                              ]
+
+        # Create the dataframe with the scores
+        df = pd.DataFrame(similarities_results, columns=similarity_columns)
+        output_file = os.path.join(text_expl_dir, f"{video_id}_similarities.csv")
+        df.to_csv(output_file, index=False)
 
 if __name__ == "__main__":
 
@@ -370,7 +407,7 @@ if __name__ == "__main__":
     prompt = "Describe the most prominent objects and events in the video, in 3 sentences. Don't mention background details."
     prompt_2 = "Write a brief summary that covers all 3 descriptions equally. Avoid assumptions and background details."
 
-
+    # load llava model
     quantization_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",

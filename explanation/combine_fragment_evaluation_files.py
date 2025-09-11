@@ -88,6 +88,10 @@ for videoset_key, excluded in videosets.items():
             fragment_scores_3 = np.nanmean(fragment_scores_3, axis=0)
             fragment_scores_3[:, 0:4] = np.tanh(fragment_scores_3[:, 0:4])
 
+        # Skip saving for SumMe VideoSet2
+        if dataset[d] == "SumMe" and videoset_key == "VideoSet2":
+            continue
+
         scores_path = f"./final_scores/{dataset[d]}/{videoset_key}/"
         os.makedirs(scores_path, exist_ok=True)
 
