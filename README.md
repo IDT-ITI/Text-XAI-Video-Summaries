@@ -76,7 +76,7 @@ For each video in these datasets, this command:
 
 Then, to produce textual descriptions of the created visual explanations, run the following command:
 ```
-python explanation/text_explanation.py -d ./data/SumMe ./data/TVSum
+python explanation/text_explanation.py -d ../data/SumMe ../data/TVSum
 ```
 
 For each video in these datasets, this command calls a subprocess, named LLAVA, which creates another subfolder, named **textual_explanation**, with the following files:
@@ -97,7 +97,7 @@ python explanation/text_explain.py -d VIDEO_PATH
 Example:
 ```
 python explanation/explain.py --m models/tvsum.pkl -v ../data/TVSum/video_17.mp4
-python explanation/text_explain.py -d ./data/TVSum/video_17.mp4
+python explanation/text_explain.py -d ../data/TVSum/video_17.mp4
 ```
 
 </div>
