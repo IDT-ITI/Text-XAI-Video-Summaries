@@ -105,7 +105,7 @@ python explanation/text_explain.py -d ../data/TVSum/video_17.mp4
 ## Evaluation results
 <div align="justify">
 
-To get the overall evaluation results (for all videos of the used datasets) about the **faithfulness** (Disc+) of the produced **visual explanations**, please run the [combine_fragment_evaluation_files.py](/explanation/combine_fragment_evaluation_files.py) script. The final scores are saved into the `final_scores` directory, that is placed inside the [explanation](/explanation) folder. Then, to get the overall evaluation results about the **plausibility** of the produced **textual explanations**, please run the [combine_similarities_files.py](explanation/combine_similarities_files.py) script. The average scores are saved as _averages_top_1.csv_ and _averages_top_3.csv_ in the same folder.  
+To get the overall evaluation results (for all videos of the used datasets) about the **faithfulness** (Disc+) of the produced **visual explanations**, please run the [combine_fragment_evaluation_files.py](/explanation/combine_fragment_evaluation_files.py) script. The final scores are saved into the `final_scores` directory, that is placed inside the [explanation](/explanation) folder. Then, to get the overall evaluation results about the **plausibility** of the produced **textual explanations**, please run the [combine_similarities_files.py](explanation/combine_similarities_files.py) script. The average scores are saved as "_averages_top_1.csv_" and "_averages_top_3.csv_" in the same folder.  
 
 ## Citation
 <div align="justify">
