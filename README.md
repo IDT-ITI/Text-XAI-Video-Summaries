@@ -91,13 +91,13 @@ where, `MODEL_PATH` refers to the path of the trained summarization model, `VIDE
 
 Then, to produce textual explanations for this video, please run:
 ```
-python explanation/text_explain.py -d VIDEO_PATH
+python explanation/text_explanation.py -d VIDEO_PATH
 ```
 
 Example:
 ```
 python explanation/explain.py --m models/tvsum.pkl -v ../data/TVSum/video_17.mp4
-python explanation/text_explain.py -d ../data/TVSum/video_17.mp4
+python explanation/text_explanation.py -d ../data/TVSum/video_17.mp4
 ```
 
 </div>
